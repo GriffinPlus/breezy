@@ -1,9 +1,9 @@
 # Site settings
 title: Breezy
-email: ravenpride@griffin.plus
+email: sascha@falk-online.eu
 description: >
   Griffin+ Breezy
-  The multi-platform cloud storage proxy server.
+  The multi-platform cloud storage file system.
 
 baseurl: ""
 url: https://breezy.griffin.plus
@@ -14,7 +14,7 @@ bootwatch: flatly
 # Build settings
 markdown: kramdown
 highlighter: rouge
-gems:
+plugins:
   - jekyll-feed
   - jekyll-redirect-from
   - jekyll-seo-tag
