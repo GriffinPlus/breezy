@@ -1,0 +1,46 @@
+parameters:
+- name: toolchains
+  type: object
+- name: configurations
+  type: object
+  default: [ "Debug", "Release" ]
+
+jobs:
+- job: Build
+  container: griffinplus/toolchain-gcc-8.3.0:$(Toolchain)
+  dependsOn: Preparation
+  strategy:
+    matrix:
+      ${{ each toolchain in parameters.toolchains }}:
+        ${{ each configuration in parameters.configurations }}:
+          ${{ format('{0} ({1})', toolchain, configuration) }}:
+            Toolchain: ${{ toolchain }}
+            Configuration: ${{ configuration }}
+            SemanticVersion: ${{ parameters.semanticVersion }}
+            InformationalVersion: ${{ parameters.configuration }}
+  variables:
+    GitVersion.SemVer: $[ dependencies.Preparation.outputs['GitVersion.GitVersion.SemVer'] ]
+    GitVersion.InformationalVersion: $[ dependencies.Preparation.outputs['GitVersion.GitVersion.InformationalVersion'] ]
+  steps:
+  - script: |
+      set -e
+      set -x
+      mkdir build
+      cd build
+      cmake \
+        -DCMAKE_BUILD_TYPE=$(Configuration) \
+        -DCMAKE_TOOLCHAIN_FILE="/cmake/toolchain-$(Toolchain).cmake" \
+        -DCMAKE_BINARY_DIR="${PWD}/out" \
+        -DPROJECT_VERSION="$(GitVersion.SemVer)" \
+        -DPROJECT_INFORMATIONAL_VERSION="$(GitVersion.InformationalVersion)" \
+        ..
+      cmake --build .
+      cmake --install .
+      mv /tmp/staging/* $(Build.ArtifactStagingDirectory)
+    displayName: Build
+  - task: PublishPipelineArtifact@1
+    displayName: Upload build result as pipeline artifact
+    inputs:
+      targetPath: $(Build.ArtifactStagingDirectory)
+      artifactName: build-$(Toolchain)-$(Configuration)
+

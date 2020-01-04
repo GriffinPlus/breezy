@@ -14,7 +14,7 @@ to the platforms (Windows, Linux and MacOS) that use a common component for the 
 a drive on Windows and a FUSE file system on Linux. For MacOS there are no concrete ideas yet, because no one
 of us owns a Mac.
 
-The originally planned proxy mode could be realized by an S3 server connected to drive/filesystem provided by
+The originally planned proxy mode could be realized by an S3 server working on top of the filesystem provided by
 *Breezy*. A realization with [minio](https://min.io/) could become an option.
 
 Ideas and the interest to contribute are very welcome.

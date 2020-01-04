@@ -1,0 +1,36 @@
+# The pipeline builds the Breezy project.
+
+# trigger when branch 'master' changes
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    exclude:
+    - README.md
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: Preparation
+    steps:
+    - task: GitVersion@5
+      name: GitVersion_org
+      displayName: 'Determine version number'
+      inputs:
+        runtime: 'core'
+    - script: |
+        # workaround until GitVersion integrates PR #2012 (https://github.com/GitTools/GitVersion/pull/2012)
+        echo "##vso[task.setvariable variable=GitVersion.SemVer;isOutput=true]$(GitVersion.SemVer)"
+        echo "##vso[task.setvariable variable=GitVersion.InformationalVersion;isOutput=true]$(GitVersion.InformationalVersion)"
+      name: GitVersion
+  - template: azure-pipelines.build-jobs.template
+    parameters:
+      toolchains:
+      - i686-unknown-linux-musl
+      - i686-w64-mingw32
+      - x86_64-unknown-linux-musl
+      - x86_64-w64-mingw32
