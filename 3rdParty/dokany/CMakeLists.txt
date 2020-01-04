@@ -36,15 +36,5 @@ target_sources(${lib}
 )
 
 # set compiler-specific flags
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-
-	# GCC
-	# TODO
-
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-
-	#  Visual Studio
-	target_compile_definitions(${lib} PRIVATE _EXPORTING)
-	target_compile_definitions(${lib} PRIVATE UNICODE UNICODE)
-
-endif()
+target_compile_definitions(${lib} PRIVATE UNICODE UNICODE)
+target_compile_definitions(${lib} PRIVATE _EXPORTING)

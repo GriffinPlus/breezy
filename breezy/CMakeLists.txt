@@ -48,6 +48,9 @@ set_target_properties(${lib} PROPERTIES
 )
 
 # Set compiler-specific flags
+target_compile_definitions(${lib} PRIVATE UNICODE UNICODE)
+target_compile_definitions(${lib} PRIVATE BREEZY_EXPORT)
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 
 	# GCC
@@ -55,8 +58,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 
 	# MSVC
-	target_compile_definitions(${lib} PRIVATE BREEZY_EXPORT)
-	target_compile_definitions(${lib} PRIVATE UNICODE UNICODE)
 
 endif()
 
