@@ -7,7 +7,7 @@ parameters:
 
 jobs:
 - job: Build
-  container: griffinplus/toolchain-gcc-8.3.0:$(Toolchain)
+  container: griffinplus/toolchain-gcc-9.2.0:$(Toolchain)
   dependsOn: Preparation
   strategy:
     matrix:
