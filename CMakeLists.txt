@@ -16,13 +16,13 @@ add_subdirectory(breezyfs)
 
 if (WIN32)
 	install(
-		TARGETS breezyfs breezy dokan1
+		TARGETS breezyfs breezy breezy_test dokan1
 		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib)
 else()
 	install(
-		TARGETS breezyfs breezy
+		TARGETS breezyfs breezy breezy_test
 		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib)
