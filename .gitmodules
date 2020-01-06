@@ -1,6 +1,6 @@
 [submodule "CMakeHelpers"]
 	path = CMakeHelpers
-	url = https://github.com/halex2005/CMakeHelpers.git
+	url = https://github.com/ravenpride/CMakeHelpers.git
 [submodule "3rdParty/dokany/project"]
 	path = 3rdParty/dokany/project
-	url = https://github.com/dokan-dev/dokany
+	url = https://github.com/ravenpride/dokany
