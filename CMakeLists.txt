@@ -8,8 +8,14 @@ set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if (WIN32)
+	# remove preceding 'lib' and adjust file extensions
+	set (CMAKE_SHARED_LIBRARY_PREFIX "")
+	set (CMAKE_SHARED_LIBRARY_SUFFIX ".dll")
+	set (CMAKE_IMPORT_LIBRARY_PREFIX "")
 	set (CMAKE_IMPORT_LIBRARY_SUFFIX ".dll.lib")
+	set (CMAKE_STATIC_LIBRARY_PREFIX "")
 	set (CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
+
 	add_subdirectory(3rdParty/dokany)
 endif()
 
