@@ -6,8 +6,8 @@ This project is under active development and not ready for use, yet.
 
 # Breezy - Multi-platform cloud storage file system
 
-![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/griffinplus/0c5429e2-3d59-4fb6-9b83-f9d93ea1d794/19/master?label=Build)
-![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/griffinplus/breezy/19/master?label=Tests)
+[![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/griffinplus/0c5429e2-3d59-4fb6-9b83-f9d93ea1d794/19/master?label=Build)](https://dev.azure.com/griffinplus/Breezy/_build?definitionId=19)
+[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/griffinplus/breezy/19/master?label=Tests)](https://dev.azure.com/griffinplus/Breezy/_build?definitionId=19)
 
 ## Overview
 
