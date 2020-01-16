@@ -3,8 +3,8 @@
 # set name of the library (without extension)
 set( lib breezy )
 
-# add library target
-add_library( ${lib} SHARED )
+# add library targets
+add_library( ${lib} )
 
 # generate a resource file on Windows
 if( WIN32 )
@@ -25,36 +25,38 @@ if( WIN32 )
         COMPANY_COPYRIGHT "Copyright (c) 2019 Griffin+"
         ICON "${CMAKE_CURRENT_SOURCE_DIR}/product.ico"
     )
-    target_sources( ${lib} PRIVATE ${ProductVersionFiles} )
+    set( sources ${sources} PRIVATE ${ProductVersionFiles} )
 endif()
 
-# add source files to target
-target_sources( ${lib}
-    PRIVATE src/BreezyCore.cpp
-    PRIVATE src/init.cpp
-)
+# add project specific source files
+set( sources ${sources}
+     PRIVATE src/BreezyCore.cpp
+     PRIVATE src/init.cpp )
 
 # add windows specific source files to target
 if( WIN32 )
-    target_sources( ${lib} PRIVATE src/dllmain.cpp )
+    set( sources ${sources} PRIVATE src/dllmain.cpp )
 endif()
 
+# associate sources with the library targets
+target_sources( ${lib} ${sources} )
+
+# define the include directories used when building
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
-# Name output .so files "mylib.1.0" which is pretty useful
+# Name output .so files "breezy.1.0.0.0" which is pretty useful
 set_target_properties( ${lib} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION}
 )
 
 # Set compiler-specific flags
-target_compile_definitions( ${lib} PRIVATE UNICODE UNICODE )
-target_compile_definitions( ${lib} PRIVATE BREEZY_EXPORT )
+set( compile_definitions PRIVATE UNICODE UNICODE BREEZY_EXPORT )
+target_compile_definitions( ${lib} ${compile_definitions} )
 
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
-
     # GCC
-
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libstdc++ -static-libgcc" )
 elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
 
     # MSVC
@@ -80,7 +82,7 @@ execute_process(
     RESULT_VARIABLE result
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
 if( result )
-	message( FATAL_ERROR "Build step for googletest failed: ${result}" )
+    message( FATAL_ERROR "Build step for googletest failed: ${result}" )
 endif()
 
 # Prevent overriding the parent project's compiler/linker settings on Windows

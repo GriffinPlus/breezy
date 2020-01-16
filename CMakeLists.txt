@@ -1,6 +1,9 @@
 cmake_minimum_required( VERSION 3.12 )
 
-set( PROJECT_VERSION "0.0.0.0" )
+if( NOT DEFINED PROJECT_VERSION )
+    set( PROJECT_VERSION "0.0.0.0" )
+endif()
+
 project( breezy VERSION ${PROJECT_VERSION} )
 
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
@@ -12,9 +15,9 @@ if (WIN32)
     set( CMAKE_SHARED_LIBRARY_PREFIX "" )
     set( CMAKE_SHARED_LIBRARY_SUFFIX ".dll" )
     set( CMAKE_IMPORT_LIBRARY_PREFIX "" )
-    set( CMAKE_IMPORT_LIBRARY_SUFFIX ".dll.lib" )
+    set( CMAKE_IMPORT_LIBRARY_SUFFIX ".lib" )
     set( CMAKE_STATIC_LIBRARY_PREFIX "" )
-    set( CMAKE_STATIC_LIBRARY_SUFFIX ".lib" )
+    set( CMAKE_STATIC_LIBRARY_SUFFIX "_static.lib" )
 
     add_subdirectory( 3rdParty/dokany )
 endif()

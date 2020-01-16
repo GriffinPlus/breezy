@@ -6,20 +6,6 @@ set( exe breezyfs )
 # add executable target
 add_executable( ${exe} )
 
-# add source files to target
-target_sources( ${exe}
-    PRIVATE src/main.cpp
-)
-
-# add include directories
-include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../breezy/include"
-)
-
-# link with the breezy core library
-target_link_libraries( ${exe} breezy )
-
 if (WIN32)
     # generate a resource file on Windows
     set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeHelpers" )
@@ -39,7 +25,7 @@ if (WIN32)
         COMPANY_COPYRIGHT "Copyright (c) 2020 Griffin+"
         ICON "${CMAKE_CURRENT_SOURCE_DIR}/product.ico"
     )
-    target_sources(${exe} PRIVATE ${ProductVersionFiles})
+    set( sources ${sources} PRIVATE ${ProductVersionFiles} )
 
     # add include directories
     include_directories(
@@ -51,8 +37,27 @@ if (WIN32)
     target_link_libraries( ${exe} dokan1 )
 endif()
 
+# link with the breezy core library
+target_link_libraries( ${exe} breezy )
+
+# add project specific source files
+set( sources ${sources} 
+     PRIVATE src/main.cpp
+)
+
+# associate sources with the library targets
+target_sources( ${exe} ${sources} )
+
+# add include directories
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../breezy/include"
+)
+
 # Set compiler-specific flags
-target_compile_definitions( ${exe} PRIVATE UNICODE UNICODE )
+set( compile_definitions PRIVATE UNICODE UNICODE )
+target_compile_definitions( ${exe} ${compile_definitions} )
+
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
 
 	# GCC

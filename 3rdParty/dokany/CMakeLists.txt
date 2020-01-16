@@ -4,10 +4,8 @@
 set( lib dokan1 )
 set( DOKANY_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/project" )
 
-include_directories ( "${DOKANY_ROOT}/sys" )
-
 # add library target
-add_library( ${lib} SHARED )
+add_library( ${lib} )
 
 # add source files to target
 target_sources( ${lib}
@@ -32,6 +30,9 @@ target_sources( ${lib}
     PRIVATE "${DOKANY_ROOT}/dokan/volume.c"
     PRIVATE "${DOKANY_ROOT}/dokan/write.c"
 )
+
+# set include directories
+include_directories ( "${DOKANY_ROOT}/sys" )
 
 # set compiler-specific flags
 target_compile_definitions( ${lib} PRIVATE UNICODE UNICODE )
