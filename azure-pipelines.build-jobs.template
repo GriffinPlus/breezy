@@ -36,11 +36,11 @@ jobs:
         ..
       cmake --build .
       cmake --install .
-      mv /tmp/staging/* $(Build.ArtifactStagingDirectory)
+      cd /tmp/staging/
+      tar -czvf "$(Build.ArtifactStagingDirectory)/breezy.tar.gz" .
     displayName: Build
   - task: PublishPipelineArtifact@1
     displayName: Upload build result as pipeline artifact
     inputs:
       targetPath: $(Build.ArtifactStagingDirectory)
       artifactName: build-$(Toolchain)-$(Configuration)
-

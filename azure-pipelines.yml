@@ -34,3 +34,122 @@ stages:
       - i686-w64-mingw32
       - x86_64-unknown-linux-musl
       - x86_64-w64-mingw32
+
+- stage: Tests
+  jobs:
+  - job:
+    displayName: breezy-linux-i686
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download pipeline artifact
+      inputs:
+        source: current
+        artifact: build-i686-unknown-linux-musl-Release
+        path: $(Build.ArtifactStagingDirectory)
+    - bash: |
+        mkdir -p ~/.local/bin ~/.local/lib
+        export PATH="~/.local/bin:$PATH"
+        export LD_LIBRARY_PATH="~/.local/lib:/lib:/usr/lib"
+        cd ~/.local
+        ls -al
+        ls -al bin/
+        ls -al lib/
+        tar -xvzf "$(Build.ArtifactStagingDirectory)/breezy.tar.gz"
+        ls -al
+        ls -al bin/
+        ls -al lib/
+        cd bin
+        ldd ./breezyfs
+        ldd ./breezy_test
+        ./breezy_test --gtest_output=xml:$(Common.TestResultsDirectory)/TEST-breezy.xml
+      displayName: Run Tests
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: $(Common.TestResultsDirectory)/TEST-*.xml
+        failTaskOnFailedTests: true
+
+  - job:
+    displayName: breezy-linux-x86_x64
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download pipeline artifact
+      inputs:
+        source: current
+        artifact: build-x86_64-unknown-linux-musl-Release
+        path: $(Build.ArtifactStagingDirectory)
+    - bash: |
+        mkdir -p ~/.local/bin ~/.local/lib
+        export PATH="~/.local/bin:$PATH"
+        export LD_LIBRARY_PATH="~/.local/lib:/lib:/usr/lib"
+        cd ~/.local
+        ls -al
+        ls -al bin/
+        ls -al lib/
+        tar -xvzf "$(Build.ArtifactStagingDirectory)/breezy.tar.gz"
+        ls -al
+        ls -al bin/
+        ls -al lib/
+        cd bin
+        ldd ./breezyfs
+        ldd ./breezy_test
+        ./breezy_test --gtest_output=xml:$(Common.TestResultsDirectory)/TEST-breezy.xml
+      displayName: Run Tests
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: $(Common.TestResultsDirectory)/TEST-*.xml
+        failTaskOnFailedTests: true
+
+  - job:
+    displayName: breezy-windows-i686
+    pool:
+      vmImage: windows-latest
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download pipeline artifact
+      inputs:
+        source: current
+        artifact: build-i686-w64-mingw32-Release
+        path: $(Build.ArtifactStagingDirectory)
+    - powershell: |
+        New-Item -ItemType directory -Path $(Pipeline.Workspace)/breezy
+        cd $(Pipeline.Workspace)/breezy
+        Copy-Item -Path $(Build.ArtifactStagingDirectory)\breezy.tar.gz .
+        tar -xzf breezy.tar.gz
+        cd bin
+        .\breezy_test.exe --gtest_output=xml:$(Common.TestResultsDirectory)/TEST-breezy.xml
+      displayName: Run Tests
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: $(Common.TestResultsDirectory)\TEST-*.xml
+        failTaskOnFailedTests: true
+  - job:
+    displayName: breezy-windows-x86_x64
+    pool:
+      vmImage: windows-latest
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: Download pipeline artifact
+      inputs:
+        source: current
+        artifact: build-x86_64-w64-mingw32-Release
+        path: $(Build.ArtifactStagingDirectory)
+    - powershell: |
+        New-Item -ItemType directory -Path $(Pipeline.Workspace)/breezy
+        cd $(Pipeline.Workspace)/breezy
+        Copy-Item -Path $(Build.ArtifactStagingDirectory)\breezy.tar.gz .
+        tar -xzf breezy.tar.gz
+        cd bin
+        .\breezy_test.exe --gtest_output=xml:$(Common.TestResultsDirectory)/TEST-breezy.xml
+      displayName: Run Tests
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: $(Common.TestResultsDirectory)/TEST-*.xml
+        failTaskOnFailedTests: true
