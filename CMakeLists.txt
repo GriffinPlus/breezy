@@ -30,7 +30,7 @@ message( "CMAKE_CXX_FLAGS_MINSIZEREL is ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
 
     if( LINK_RUNTIME_STATICALLY )
-        set( runtime_flags "-static-libstdc++ -static-libgcc" )
+        set( runtime_flags "-static -static-libstdc++ -static-libgcc" )
     else()
         set( runtime_flags "-shared-libgcc" )
     endif()
