@@ -87,7 +87,7 @@ install( FILES ${TOOLCHAIN_RUNTIME_FILES}
          TYPE BIN )
 
 # install targets
-set( install_targets breezyfs breezy breezy_test )
+set( install_targets breezyfs breezy_test )
 if( BUILD_SHARED_LIBS )
     set( install_targets ${install_targets} breezy gtest gtest_main )
     if( WIN32 )
