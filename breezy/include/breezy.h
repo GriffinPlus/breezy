@@ -2,34 +2,6 @@
 #define BREEZY_H_
 
 ////////////////////////////////////////////////////////////////////////////////
-// API function export definitions
-////////////////////////////////////////////////////////////////////////////////
-#if defined _WIN32 || defined __CYGWIN__
-#ifdef BREEZY_EXPORT
-	#ifdef __GNUC__
-		#define BREEZY_API __attribute__ ((dllexport))
-	#else
-		#define BREEZY_API __declspec(dllexport)
-	#endif
-#else
-	#ifdef __GNUC__
-		#define BREEZY_API __attribute__ ((dllimport))
-	#else
-		#define BREEZY_API __declspec(dllimport)
-	#endif
-#endif
-#define BREEZY_NOT_EXPORTED
-#else
-	#if __GNUC__ >= 4
-		#define BREEZY_API __attribute__ ((visibility ("default")))
-		#define BREEZY_NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
-	#else
-		#define BREEZY_API
-		#define BREEZY_NOT_EXPORTED
-	#endif
-#endif
-
-////////////////////////////////////////////////////////////////////////////////
 // C++ includes
 ////////////////////////////////////////////////////////////////////////////////
 #include "BreezyCore.h"
@@ -52,10 +24,7 @@ typedef int BREEZY_API_RESULT;
 extern "C" {
 #endif
 
-BREEZY_API
 BREEZY_API_RESULT init_breezy();
-
-BREEZY_API
 BREEZY_API_RESULT shutdown_breezy();
 
 #ifdef __cplusplus

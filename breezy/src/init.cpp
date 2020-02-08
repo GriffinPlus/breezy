@@ -9,7 +9,7 @@ static std::mutex g_initMutex;
 BREEZY_API_RESULT init_breezy()
 {
 	std::lock_guard<std::mutex> lock(g_initMutex);
-	if (g_nRefCount++ == 1) {
+	if (g_nRefCount++ == 0) {
 		g_pBreezyCore = new BreezyCore();
 	}
 	return BREEZY_ERROR_SUCCESS;

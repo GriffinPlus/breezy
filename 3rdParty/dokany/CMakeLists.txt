@@ -1,14 +1,9 @@
 ﻿cmake_minimum_required( VERSION 3.12 )
 
-# set name of the library (without extension)
-set( lib dokan1 )
 set( DOKANY_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/project" )
 
-# add library target
-add_library( ${lib} )
-
 # add source files to target
-target_sources( ${lib}
+set( sources
     PRIVATE "${DOKANY_ROOT}/dokan/access.c"
     PRIVATE "${DOKANY_ROOT}/dokan/cleanup.c"
     PRIVATE "${DOKANY_ROOT}/dokan/close.c"
@@ -31,9 +26,24 @@ target_sources( ${lib}
     PRIVATE "${DOKANY_ROOT}/dokan/write.c"
 )
 
+# prepare settings common to dynamically and statically linked libraries
+set( common_target_compile_definitions PRIVATE _UNICODE UNICODE _EXPORTING )
+
+# add target for dynamically linked library
+if( BUILD_SHARED_LIBS )
+    add_library( dokan1 SHARED )
+    set_target_properties( dokan1 PROPERTIES OUTPUT_NAME dokan1 )
+    target_sources( dokan1 ${sources} )
+    target_compile_definitions( dokan1 ${common_target_compile_definitions} )
+endif()
+
+# add target for statically linked library
+if( BUILD_STATIC_LIBS )
+    add_library( dokan1_static STATIC )
+    set_target_properties( dokan1_static PROPERTIES OUTPUT_NAME dokan1 )
+    target_sources( dokan1_static ${sources} )
+    target_compile_definitions( dokan1_static ${common_target_compile_definitions} )
+endif()
+
 # set include directories
 include_directories ( "${DOKANY_ROOT}/sys" )
-
-# set compiler-specific flags
-target_compile_definitions( ${lib} PRIVATE UNICODE UNICODE )
-target_compile_definitions( ${lib} PRIVATE _EXPORTING )

@@ -37,9 +37,6 @@ if (WIN32)
     target_link_libraries( ${exe} dokan1 )
 endif()
 
-# link with the breezy core library
-target_link_libraries( ${exe} breezy )
-
 # add project specific source files
 set( sources ${sources} 
      PRIVATE src/main.cpp
@@ -58,12 +55,14 @@ include_directories(
 set( compile_definitions PRIVATE UNICODE UNICODE )
 target_compile_definitions( ${exe} ${compile_definitions} )
 
-if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
+if (BUILD_STATIC_APPS)
 
-	# GCC
+    # link with the breezy core library
+    target_link_libraries( ${exe} breezy_static )
 
-elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+else()
 
-	# Visual Studio
+    # link with the breezy core library
+    target_link_libraries( ${exe} breezy )
 
 endif()

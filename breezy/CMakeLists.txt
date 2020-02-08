@@ -3,11 +3,8 @@
 # set name of the library (without extension)
 set( lib breezy )
 
-# add library targets
-add_library( ${lib} )
-
-# generate a resource file on Windows
-if( WIN32 )
+# add windows specific source files to target
+if( WIN32 AND BUILD_SHARED_LIBS )
     set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeHelpers" )
     include( generate_product_version )
     generate_product_version(
@@ -26,42 +23,42 @@ if( WIN32 )
         ICON "${CMAKE_CURRENT_SOURCE_DIR}/product.ico"
     )
     set( sources ${sources} PRIVATE ${ProductVersionFiles} )
+    set( sources ${sources} PRIVATE src/dllmain.cpp )
 endif()
 
 # add project specific source files
 set( sources ${sources}
+     PRIVATE src/breezy.def
      PRIVATE src/BreezyCore.cpp
      PRIVATE src/init.cpp )
 
-# add windows specific source files to target
-if( WIN32 )
-    set( sources ${sources} PRIVATE src/dllmain.cpp )
+# prepare settings common to dynamically and statically linked libraries
+set( common_target_compile_definitions PRIVATE _UNICODE UNICODE )
+
+# add target for dynamically linked library
+if( BUILD_SHARED_LIBS )
+    add_library( breezy SHARED )
+    set_target_properties( breezy PROPERTIES OUTPUT_NAME breezy )
+    target_sources( breezy ${sources} )
+    target_compile_definitions( breezy ${common_target_compile_definitions} )
+
+    # Name output .so files "breezy.1.0.0.0" which is pretty useful
+    set_target_properties( breezy PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION}
+    )
 endif()
 
-# associate sources with the library targets
-target_sources( ${lib} ${sources} )
+# add target for statically linked library
+if( BUILD_STATIC_LIBS )
+    add_library( breezy_static STATIC )
+    set_target_properties( breezy_static PROPERTIES OUTPUT_NAME breezy )
+    target_sources( breezy_static ${sources} )
+    target_compile_definitions( breezy_static ${common_target_compile_definitions} )
+endif()
 
 # define the include directories used when building
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
-
-# Name output .so files "breezy.1.0.0.0" which is pretty useful
-set_target_properties( ${lib} PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION ${PROJECT_VERSION}
-)
-
-# Set compiler-specific flags
-set( compile_definitions PRIVATE UNICODE UNICODE BREEZY_EXPORT )
-target_compile_definitions( ${lib} ${compile_definitions} )
-
-if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
-    # GCC
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libstdc++ -static-libgcc" )
-elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
-
-    # MSVC
-
-endif()
 
 # -----------------------------------------------------------------------------
 # install googletest for unit-testing
@@ -86,30 +83,43 @@ if( result )
 endif()
 
 # Prevent overriding the parent project's compiler/linker settings on Windows
-set( gtest_force_shared_crt ON CACHE BOOL "" FORCE )
-
-# Add googletest directly to our build.
-# This defines the gtest and gtest_main targets.
-add_subdirectory(
-    ${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-    ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-    EXCLUDE_FROM_ALL
-)
-
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if( CMAKE_VERSION VERSION_LESS 2.8.11 )
-    include_directories( "${gtest_SOURCE_DIR}/include" )
-endif()
+# set( gtest_force_shared_crt ON CACHE BOOL "" FORCE )
 
 # -----------------------------------------------------------------------------
 # add unit test target
 # -----------------------------------------------------------------------------
 
-add_executable( breezy_test )
-target_link_libraries( breezy_test gtest_main )
-target_link_libraries( breezy_test ${lib} )
-target_sources( breezy_test
-    PRIVATE test/init.cpp
-)
+set( sources
+     PRIVATE test/init.cpp )
+
+if( BUILD_STATIC_LIBS )
+
+    # Add googletest directly to the build (defines the gtest and gtest_main targets)
+    set( LAST_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} )
+    set( BUILD_SHARED_LIBS OFF )  # trick to build googletest as a static library
+    add_subdirectory(
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+        EXCLUDE_FROM_ALL
+    )
+    set( BUILD_SHARED_LIBS ${LAST_BUILD_SHARED_LIBS} )
+
+    add_executable( breezy_test )
+    target_link_libraries( breezy_test gtest_main )
+    target_link_libraries( breezy_test breezy_static )
+    target_sources( breezy_test ${sources} )
+
+elseif( BUILD_SHARED_LIBS )
+
+    # Add googletest directly to the build (defines the gtest and gtest_main targets)
+    add_subdirectory(
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+        ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+        EXCLUDE_FROM_ALL
+    )
+
+    add_executable( breezy_test )
+    target_link_libraries( breezy_test gtest_main )
+    target_link_libraries( breezy_test breezy )
+    target_sources( breezy_test ${sources} )
+endif()

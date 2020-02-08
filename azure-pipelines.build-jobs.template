@@ -31,7 +31,10 @@ jobs:
         -DCMAKE_BUILD_TYPE=$(Configuration) \
         -DCMAKE_TOOLCHAIN_FILE="/cmake/toolchain-$(Toolchain).cmake" \
         -DCMAKE_BINARY_DIR="${PWD}/out" \
-        -DBUILD_SHARED_LIBS=OFF \
+        -DBUILD_SHARED_LIBS=ON \
+        -DBUILD_STATIC_LIBS=ON \
+        -DBUILD_STATIC_APPS=ON \
+        -DLINK_RUNTIME_STATICALLY=ON \
         -DPROJECT_VERSION="$(GitVersion.SemVer).0" \
         -DPROJECT_INFORMATIONAL_VERSION="$(GitVersion.InformationalVersion)" \
         ..

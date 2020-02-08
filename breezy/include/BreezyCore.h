@@ -3,7 +3,7 @@
 
 #include <breezy.h>
 
-class BREEZY_API BreezyCore
+class BreezyCore
 {
 	public: BreezyCore();
 	public: ~BreezyCore();
