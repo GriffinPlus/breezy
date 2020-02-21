@@ -6,7 +6,7 @@ set( exe breezyfs )
 # add executable target
 add_executable( ${exe} )
 
-if (WIN32)
+if( WIN32 )
     # generate a resource file on Windows
     set( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeHelpers" )
     include( generate_product_version )
@@ -55,14 +55,9 @@ include_directories(
 set( compile_definitions PRIVATE UNICODE UNICODE )
 target_compile_definitions( ${exe} ${compile_definitions} )
 
-if (BUILD_STATIC_APPS)
-
-    # link with the breezy core library
+# link with the breezy core library
+if( BUILD_STATIC_APPS )
     target_link_libraries( ${exe} breezy_static )
-
 else()
-
-    # link with the breezy core library
-    target_link_libraries( ${exe} breezy )
-
+    target_link_libraries( ${exe} breezy_shared )
 endif()

@@ -13,11 +13,21 @@ jobs:
     matrix:
       ${{ each toolchain in parameters.toolchains }}:
         ${{ each configuration in parameters.configurations }}:
-          ${{ format('{0} ({1})', toolchain, configuration) }}:
-            Toolchain: ${{ toolchain }}
+          ${{ format('{0} ({1})', toolchain.name, configuration) }}:
+            Toolchain: ${{ toolchain.name }}
             Configuration: ${{ configuration }}
-            SemanticVersion: ${{ parameters.semanticVersion }}
-            InformationalVersion: ${{ parameters.configuration }}
+            ${{ if eq(toolchain.buildSharedLibs, false) }}:
+                BuildSharedLibs: "OFF"
+            ${{ if eq(toolchain.buildSharedLibs, true) }}:
+                BuildSharedLibs: "ON"
+            ${{ if eq(toolchain.buildStaticLibs, false) }}:
+                BuildStaticLibs: "OFF"
+            ${{ if eq(toolchain.buildStaticLibs, true) }}:
+                BuildStaticLibs: "ON"
+            ${{ if eq(toolchain.buildStaticApps, false) }}:
+                BuildStaticApps: "OFF"
+            ${{ if eq(toolchain.buildStaticApps, true) }}:
+                BuildStaticApps: "ON"
   variables:
     GitVersion.SemVer: $[ dependencies.Preparation.outputs['GitVersion.GitVersion.SemVer'] ]
     GitVersion.InformationalVersion: $[ dependencies.Preparation.outputs['GitVersion.GitVersion.InformationalVersion'] ]
@@ -31,10 +41,10 @@ jobs:
         -DCMAKE_BUILD_TYPE=$(Configuration) \
         -DCMAKE_TOOLCHAIN_FILE="/cmake/toolchain-$(Toolchain).cmake" \
         -DCMAKE_BINARY_DIR="${PWD}/out" \
-        -DBUILD_SHARED_LIBS=ON \
-        -DBUILD_STATIC_LIBS=ON \
-        -DBUILD_STATIC_APPS=ON \
-        -DLINK_RUNTIME_STATICALLY=ON \
+        -DBUILD_SHARED_LIBS=$(BuildSharedLibs) \
+        -DBUILD_STATIC_LIBS=$(BuildStaticLibs) \
+        -DBUILD_STATIC_APPS=$(BuildStaticApps) \
+        -DINSTALL_TOOLCHAIN_FILES=ON \
         -DPROJECT_VERSION="$(GitVersion.SemVer).0" \
         -DPROJECT_INFORMATIONAL_VERSION="$(GitVersion.InformationalVersion)" \
         ..

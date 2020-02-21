@@ -29,21 +29,11 @@ set( sources
 # prepare settings common to dynamically and statically linked libraries
 set( common_target_compile_definitions PRIVATE _UNICODE UNICODE _EXPORTING )
 
-# add target for dynamically linked library
-if( BUILD_SHARED_LIBS )
-    add_library( dokan1 SHARED )
-    set_target_properties( dokan1 PROPERTIES OUTPUT_NAME dokan1 )
-    target_sources( dokan1 ${sources} )
-    target_compile_definitions( dokan1 ${common_target_compile_definitions} )
-endif()
-
-# add target for statically linked library
-if( BUILD_STATIC_LIBS )
-    add_library( dokan1_static STATIC )
-    set_target_properties( dokan1_static PROPERTIES OUTPUT_NAME dokan1 )
-    target_sources( dokan1_static ${sources} )
-    target_compile_definitions( dokan1_static ${common_target_compile_definitions} )
-endif()
+# add target for library
+add_library( dokan1 )
+set_target_properties( dokan1 PROPERTIES OUTPUT_NAME dokan1 )
+target_sources( dokan1 ${sources} )
+target_compile_definitions( dokan1 ${common_target_compile_definitions} )
 
 # set include directories
 include_directories ( "${DOKANY_ROOT}/sys" )
