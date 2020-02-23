@@ -41,15 +41,28 @@ endif()
 # prepare settings common to dynamically and statically linked libraries
 set( common_target_compile_definitions PRIVATE _UNICODE UNICODE )
 
+# define the include directories used when building
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+if( WIN32 )
+    include_directories(
+        "${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/dokany/project/dokan"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/dokany/project/sys"
+    )
+endif()
+
 # add target for shared library
 if( BUILD_SHARED_LIBS )
 
     add_library( breezy_shared SHARED )
     set_target_properties( breezy_shared PROPERTIES OUTPUT_NAME breezy )
     target_sources( breezy_shared ${sources_shared} )
-
-    # add compile definitions
     target_compile_definitions( breezy_shared ${common_target_compile_definitions} )
+
+    if( WIN32 )
+        target_link_libraries( breezy_shared dokan1_shared )
+    endif()
 
     # Name output .so files "breezy.1.0.0.0" which is pretty useful
     set_target_properties( breezy_shared PROPERTIES
@@ -65,14 +78,13 @@ if( BUILD_STATIC_LIBS )
     add_library( breezy_static STATIC )
     set_target_properties( breezy_static PROPERTIES OUTPUT_NAME breezy )
     target_sources( breezy_static ${sources_static} )
-
-    # add compile definitions
     target_compile_definitions( breezy_static ${common_target_compile_definitions} )
 
-endif()
+    if( WIN32 )
+        target_link_libraries( breezy_static dokan1_static )
+    endif()
 
-# define the include directories used when building
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
+endif()
 
 # -----------------------------------------------------------------------------
 # install googletest for unit-testing

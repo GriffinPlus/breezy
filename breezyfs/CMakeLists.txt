@@ -26,15 +26,6 @@ if( WIN32 )
         ICON "${CMAKE_CURRENT_SOURCE_DIR}/product.ico"
     )
     set( sources ${sources} PRIVATE ${ProductVersionFiles} )
-
-    # add include directories
-    include_directories(
-        "${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/dokany/project/dokan"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../3rdParty/dokany/project/sys"
-    )
-
-    # add libraries
-    target_link_libraries( ${exe} dokan1 )
 endif()
 
 # add project specific source files

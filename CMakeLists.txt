@@ -94,7 +94,7 @@ set( install_targets breezyfs breezy_test )
 if( BUILD_SHARED_LIBS )
     set( install_targets ${install_targets} breezy_shared gtest gtest_main )
     if( WIN32 )
-        set( install_targets ${install_targets} dokan1 )
+        set( install_targets ${install_targets} dokan1_shared )
     endif()
 endif()
 install(
