@@ -1,5 +1,6 @@
 cmake_minimum_required( VERSION 3.12 )
 
+# user options
 option( BUILD_SHARED_LIBS       "Build shared libraries"              ON  )
 option( BUILD_STATIC_LIBS       "Build static libraries"              ON  )
 option( BUILD_STATIC_APPS       "Build statically linked apps"        ON  )
@@ -70,8 +71,10 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 
+###################################################################################################
+# remove preceding 'lib' and adjust file extensions on windows
+###################################################################################################
 if( WIN32 )
-    # remove preceding 'lib' and adjust file extensions
     set( CMAKE_SHARED_LIBRARY_PREFIX "" )
     set( CMAKE_SHARED_LIBRARY_SUFFIX ".dll" )
     set( CMAKE_IMPORT_LIBRARY_PREFIX "" )
@@ -80,16 +83,29 @@ if( WIN32 )
     set( CMAKE_STATIC_LIBRARY_SUFFIX "_static.lib" )
 endif()
 
+###################################################################################################
+# download and install boost
+###################################################################################################
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+set( BOOST_REQUESTED_VERSION 1.72.0 )
+find_package( Boost COMPONENTS system program_options )
+
+###################################################################################################
 # include targets to build shared libraries
+###################################################################################################
 add_subdirectory( breezy )
 if( WIN32 )
     add_subdirectory( 3rdParty/dokany )
 endif()
 
+###################################################################################################
 # include targets to build executables
+###################################################################################################
 add_subdirectory( breezyfs )
 
+###################################################################################################
 # install targets
+###################################################################################################
 set( install_targets breezyfs breezy_test )
 if( BUILD_SHARED_LIBS )
     set( install_targets ${install_targets} breezy_shared gtest gtest_main )
