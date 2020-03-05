@@ -99,8 +99,8 @@ endmacro()
 
 macro(DO_FIND_BOOST_ROOT)
 	if(NOT BOOST_ROOT_DIR)
-		message(STATUS "BOOST_ROOT_DIR is not defined, using binary directory.")
-		set(BOOST_ROOT_DIR ${CURRENT_CMAKE_BINARY_DIR} CACHE PATH "")
+		set(BOOST_ROOT_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE PATH "")
+		message(STATUS "BOOST_ROOT_DIR is not defined, using binary directory (${BOOST_ROOT_DIR}).")
 	endif()
 
 	find_path(BOOST_INCLUDE_DIR boost/config.hpp ${BOOST_ROOT_DIR}/include)
@@ -125,6 +125,14 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 		set(BOOST_MAYBE_STATIC "link=static")
 	endif()
 
+	if( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
+		set( BOOST_TARGET_OS "windows")
+	elseif( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
+		set( BOOST_TARGET_OS "linux")
+	else()
+		message( "Target OS '${CMAKE_SYSTEM_NAME}' is not supported!" )
+	endif()
+
 	include(ExternalProject)
 	if( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Windows" )
 		ExternalProject_Add(
@@ -138,12 +146,21 @@ macro(DO_FIND_BOOST_DOWNLOAD)
 			INSTALL_DIR ${BOOST_ROOT_DIR}
 			)
 	else()
+		get_filename_component( cc_value "${CMAKE_C_COMPILER}" NAME )
+		get_filename_component( ccx_value "${CMAKE_CXX_COMPILER}" NAME )
+		message("cc_value = ${cc_value}")
+		message("ccx_value = ${ccx_value}")
+		file( WRITE "${BOOST_ROOT_DIR}/project-config.jam" "using gcc : x86_64 : x86_64-unknown-linux-g++ ;")
 		ExternalProject_Add(
 			Boost
 			URL https://downloads.sourceforge.net/project/boost/boost/${BOOST_REQUESTED_VERSION}/boost_${BOOST_REQUESTED_VERSION_UNDERSCORE}.tar.gz
 			UPDATE_COMMAND ""
-			CONFIGURE_COMMAND ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
-			BUILD_COMMAND ./b2 ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} ${BOOST_COMPONENTS_FOR_BUILD} install
+			# CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
+			CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./bootstrap.sh --with-toolset=gcc --prefix=${BOOST_ROOT_DIR}
+#			BUILD_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./b2 ${BOOST_MAYBE_STATIC} toolset=gcc-mingw target-os=windows --prefix=${BOOST_ROOT_DIR} ${BOOST_COMPONENTS_FOR_BUILD} install
+			BUILD_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./b2 ${BOOST_MAYBE_STATIC} toolset=gcc-mingw target-os=${BOOST_TARGET_OS} --prefix=${BOOST_ROOT_DIR} ${BOOST_COMPONENTS_FOR_BUILD} install
+#			CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./bootstrap.sh --prefix=${BOOST_ROOT_DIR}
+#			BUILD_COMMAND CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} ./b2 ${BOOST_MAYBE_STATIC} --prefix=${BOOST_ROOT_DIR} ${BOOST_COMPONENTS_FOR_BUILD} install
 			BUILD_IN_SOURCE true
 			INSTALL_COMMAND ""
 			INSTALL_DIR ${BOOST_ROOT_DIR}

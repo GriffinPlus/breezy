@@ -33,7 +33,7 @@ jobs:
     GitVersion.InformationalVersion: $[ dependencies.Preparation.outputs['GitVersion.GitVersion.InformationalVersion'] ]
   steps:
   - script: |
-      set -e
+      # set -e
       set -x
       mkdir build
       cd build
@@ -49,6 +49,7 @@ jobs:
         -DPROJECT_INFORMATIONAL_VERSION="$(GitVersion.InformationalVersion)" \
         ..
       cmake --build .
+      cat /__w/1/s/build/Boost-prefix/src/Boost/bootstrap.log
       cmake --install .
       cd /tmp/staging/
       tar -czvf "$(Build.ArtifactStagingDirectory)/breezy.tar.gz" .

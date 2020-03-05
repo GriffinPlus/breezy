@@ -46,4 +46,4 @@ if( BUILD_STATIC_LIBS )
 endif()
 
 # set include directories
-include_directories ( "${DOKANY_ROOT}/sys" )
+include_directories( AFTER "${DOKANY_ROOT}/sys" )
