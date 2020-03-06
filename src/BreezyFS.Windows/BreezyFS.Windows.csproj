@@ -6,7 +6,6 @@
         <UseWPF>true</UseWPF>
         <AssemblyName>BreezyFS</AssemblyName>
         <RootNamespace>GriffinPlus.Breezy</RootNamespace>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>

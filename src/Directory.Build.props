@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<PropertyGroup>
-		<CommonAssemblyInfoPath_Cs>$(MSBuildThisFileDirectory)\CommonAssemblyInfo.cs</CommonAssemblyInfoPath_Cs>
-		<CommonAssemblyInfoPath_Cpp>$(MSBuildThisFileDirectory)\CommonAssemblyInfo.mcpp</CommonAssemblyInfoPath_Cpp>
-		<OmitDocumentationFile>false</OmitDocumentationFile>
-	</PropertyGroup>
+    <PropertyGroup>
+        <FileAlignment>512</FileAlignment>
+        <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OmitDocumentationFile>false</OmitDocumentationFile>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
-	<Import Project="..\build.vs\Directory.Build.props"/>
+        <___Platform Condition="'$(___Platform)' != ''">$(Platform)</___Platform>
+        <___Platform Condition="'$(___Platform)' == ''">NotSet</___Platform>
+        <___OutputPath>$(SolutionDir)_build\$(MSBuildProjectName)\$(___Platform).$(Configuration)\$(TargetFramework)\</___OutputPath>
+        <___BaseIntermediateOutputPath>$(SolutionDir)_build\.obj\$(MSBuildProjectName)\</___BaseIntermediateOutputPath>
+        <___IntermediateOutputPath>$(___BaseIntermediateOutputPath)\$(___Platform).$(Configuration)\$(TargetFramework)\</___IntermediateOutputPath>
+        <OutputPath>$(___OutputPath)</OutputPath>
+        <BaseIntermediateOutputPath>$(___BaseIntermediateOutputPath)</BaseIntermediateOutputPath>
+        <IntermediateOutputPath>$(___IntermediateOutputPath)</IntermediateOutputPath>
+    </PropertyGroup>
 
 </Project>

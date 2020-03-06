@@ -5,7 +5,6 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AssemblyName>BreezyFS</AssemblyName>
         <RootNamespace>GriffinPlus.Breezy</RootNamespace>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
 
     <ItemGroup>

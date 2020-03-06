@@ -7,28 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreezyFS.Windows", "src\Bre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BreezyFS.Linux", "src\BreezyFS.Linux\BreezyFS.Linux.csproj", "{A488E22D-2C3D-4E9E-A9EA-E873A88893D2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build.vs", "build.vs", "{C2EC5BAB-23E6-4B06-8D0D-47A0B23DB320}"
-	ProjectSection(SolutionItems) = preProject
-		build.vs\AssemblyInfoVersion.cs = build.vs\AssemblyInfoVersion.cs
-		build.vs\AssemblyInfoVersion.mcpp = build.vs\AssemblyInfoVersion.mcpp
-		build.vs\Build+Deploy.psm1 = build.vs\Build+Deploy.psm1
-		build.vs\Directory.Build.Cpp.props = build.vs\Directory.Build.Cpp.props
-		build.vs\Directory.Build.Cpp.targets = build.vs\Directory.Build.Cpp.targets
-		build.vs\Directory.Build.Cs.props = build.vs\Directory.Build.Cs.props
-		build.vs\Directory.Build.Cs.targets = build.vs\Directory.Build.Cs.targets
-		build.vs\Directory.Build.props = build.vs\Directory.Build.props
-		build.vs\Directory.Build.targets = build.vs\Directory.Build.targets
-		build.vs\GitVersion.yml = build.vs\GitVersion.yml
-		build.vs\LICENSE = build.vs\LICENSE
-		build.vs\NuGet.msbuild = build.vs\NuGet.msbuild
-		build.vs\README.md = build.vs\README.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common (Repository)", "Common (Repository)", "{A05FCF98-634E-4426-BF97-8DE5C1C97F27}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.gitmodules = .gitmodules
+		azure-pipelines.yml = azure-pipelines.yml
 		src\CommonAssemblyInfo.cs = src\CommonAssemblyInfo.cs
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Build.targets = src\Directory.Build.targets
+		LICENSE = LICENSE
+		README.md = README.md
+		THIRD_PARTY_NOTICES = THIRD_PARTY_NOTICES
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Breezy.Core", "src\Breezy.Core\Breezy.Core.csproj", "{52B5F807-1183-47AC-BEA0-79B328862AD7}"
