@@ -1,0 +1,124 @@
+trigger:
+  tags:
+    include:
+    - v*
+  branches:
+    include:
+    - master
+
+variables:
+  BuildConfiguration: 'Release'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+
+pool:
+  vmImage: 'windows-2019'
+
+stages:
+
+########################################################################################################################
+# Stage: Build
+########################################################################################################################
+- stage: 'Build'
+  jobs:
+  ######################################################################################################################
+  # Job: Build
+  ######################################################################################################################
+  - job: 'Build'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core 5.0 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '5.0.x'
+        performMultiLevelLookup: true
+        installationPath: '$(Agent.ToolsDirectory)/dotnet'
+    - task: DotNetCoreCLI@2
+      displayName: 'Install GitVersion'
+      inputs:
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'install -g gitversion.tool'
+    - task: DotNetCoreCLI@2
+      displayName: 'Show GitVersion Version'
+      inputs:
+        command: 'custom'
+        custom: 'gitversion'
+        arguments: 'version'
+    - task: DotNetCoreCLI@2
+      name: 'GitVersion'
+      displayName: 'Run GitVersion'
+      inputs:
+        command: 'custom'
+        custom: 'gitversion'
+        arguments: '/output buildserver /updateassemblyinfo src/CommonAssemblyInfo.cs'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration) /p:InformationalVersion=$(GitVersion.InformationalVersion)'
+        versioningScheme: 'byEnvVar'
+        versionEnvVar: 'GitVersion.SemVer'
+    - task: PowerShell@2
+      displayName: 'Export Shared Variables'
+      inputs:
+        targetType: 'inline'
+        pwsh: true
+        script: |
+          New-Item -ItemType Directory -Force -Path '$(Pipeline.Workspace)/variables'
+          Set-Location -Path '$(Pipeline.Workspace)/variables'
+          '$(GitVersion.NuGetVersion)' | Out-File GitVersion.NuGetVersion -NoNewLine
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Pipeline Artifacts'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/_build'
+        artifactName: 'Binaries'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Shared Variables'
+      inputs:
+        targetPath: '$(Pipeline.Workspace)/variables'
+        artifactName: 'Variables'
+
+########################################################################################################################
+# Stage: Tests
+########################################################################################################################
+- stage: 'Tests'
+  jobs:
+  ######################################################################################################################
+  # Job: Tests for .NET Core 5.0 on Windows and Linux
+  ######################################################################################################################
+  - job:
+    displayName: 'Test'
+    strategy:
+      matrix:
+        'Windows':
+          VmImage: 'windows-2019'
+        'Ubuntu':
+          VmImage: 'ubuntu-20.04'
+    pool:
+      vmImage: '$(VmImage)'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 5.0 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '5.0.x'
+        performMultiLevelLookup: true
+        installationPath: '$(Agent.ToolsDirectory)/dotnet'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline Artifacts'
+      inputs:
+        artifact: 'Binaries'
+        targetPath: '$(Build.SourcesDirectory)/_build'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test'
+      inputs:
+        command: 'test'
+        projects: '**/*Tests/*.csproj'
+        nobuild: true
+        arguments: '--configuration $(buildConfiguration) --framework net5.0'
