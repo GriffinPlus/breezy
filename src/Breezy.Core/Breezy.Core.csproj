@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>GriffinPlus.Breezy</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GriffinPlus.Lib.Logging" Version="2.3.0" />
+    </ItemGroup>
+
+</Project>
