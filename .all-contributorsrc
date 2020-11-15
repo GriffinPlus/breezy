@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "ravenpride",
+      "name": "Sascha Falk",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3209384?v=4",
+      "profile": "https://github.com/ravenpride",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "breezy",
+  "projectOwner": "GriffinPlus",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
